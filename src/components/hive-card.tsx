@@ -87,9 +87,9 @@ export default function HiveCard({ hive, onDelete }: HiveCardProps) {
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Törlés
+              <Button variant="destructive" size="icon" className="h-9 w-9">
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Törlés</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

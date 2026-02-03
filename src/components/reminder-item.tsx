@@ -55,7 +55,7 @@ export default function ReminderItem({ reminder, onToggle, onDelete }: ReminderI
       </div>
        <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-destructive">
+          <Button variant="destructive" size="icon" className="shrink-0 h-9 w-9">
             <Trash2 className="w-4 h-4" />
             <span className="sr-only">Emlékeztető törlése</span>
           </Button>
