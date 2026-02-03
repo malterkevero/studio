@@ -28,23 +28,15 @@ export default function Home() {
 
   const [isHiveSheetOpen, setIsHiveSheetOpen] = React.useState(false);
   const [isReminderSheetOpen, setIsReminderSheetOpen] = React.useState(false);
-  const [editingHive, setEditingHive] = React.useState<Hive | null>(null);
   const { toast } = useToast();
 
   // Hive Handlers
   const handleAddHive = () => {
-    setEditingHive(null);
-    setIsHiveSheetOpen(true);
-  };
-
-  const handleEditHive = (hive: Hive) => {
-    setEditingHive(hive);
     setIsHiveSheetOpen(true);
   };
   
   const handleCloseHiveSheet = () => {
     setIsHiveSheetOpen(false);
-    setEditingHive(null);
   }
 
   const handleDeleteHive = (id: string) => {
@@ -56,19 +48,11 @@ export default function Home() {
   };
 
   const handleSaveHive = (data: Omit<Hive, 'id'>) => {
-    if (editingHive) {
-      setHives(hives.map((hive) => (hive.id === editingHive.id ? { ...data, id: editingHive.id } : hive)));
-       toast({
-        title: "Sikeres mentés!",
-        description: "A kaptár adatai frissültek.",
-      });
-    } else {
-      setHives([...hives, { ...data, id: getUuid() }]);
-       toast({
-        title: "Sikeres hozzáadás!",
-        description: "Az új kaptár mentésre került.",
-      });
-    }
+    setHives([...hives, { ...data, id: getUuid() }]);
+     toast({
+      title: "Sikeres hozzáadás!",
+      description: "Az új kaptár mentésre került.",
+    });
     handleCloseHiveSheet();
   };
 
@@ -151,7 +135,7 @@ export default function Home() {
                 ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {hives.map((hive) => (
-                    <HiveCard key={hive.id} hive={hive} onEdit={() => handleEditHive(hive)} onDelete={() => handleDeleteHive(hive.id)} />
+                    <HiveCard key={hive.id} hive={hive} onDelete={() => handleDeleteHive(hive.id)} />
                     ))}
                 </div>
                 )}
@@ -182,12 +166,12 @@ export default function Home() {
       <Sheet open={isHiveSheetOpen} onOpenChange={setIsHiveSheetOpen}>
         <SheetContent className="sm:max-w-lg w-full overflow-y-auto" onInteractOutside={handleCloseHiveSheet}>
            <SheetHeader>
-            <SheetTitle>{editingHive ? 'Kaptár szerkesztése' : 'Új kaptár hozzáadása'}</SheetTitle>
+            <SheetTitle>Új kaptár hozzáadása</SheetTitle>
           </SheetHeader>
           <HiveForm 
             onSubmit={handleSaveHive} 
             onCancel={handleCloseHiveSheet}
-            initialData={editingHive} 
+            initialData={null} 
           />
         </SheetContent>
       </Sheet>

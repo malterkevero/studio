@@ -27,10 +27,10 @@ import { format } from "date-fns"
 import { hu } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import QrCodeDialog from "./qr-code-dialog"
+import Link from "next/link"
 
 type HiveCardProps = {
   hive: Hive
-  onEdit: () => void
   onDelete: () => void
 }
 
@@ -43,7 +43,7 @@ const queenColorMap: Record<string, string> = {
 };
 
 
-export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
+export default function HiveCard({ hive, onDelete }: HiveCardProps) {
   return (
     <Card className="flex flex-col h-full bg-card hover:shadow-lg transition-shadow duration-300">
       <CardHeader>
@@ -79,9 +79,11 @@ export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
       <CardFooter className="mt-auto pt-4 border-t border-border/50">
         <div className="flex w-full justify-end gap-2">
           <QrCodeDialog hiveId={hive.id} hiveName={hive.name} />
-          <Button variant="outline" size="sm" onClick={onEdit}>
-            <Pencil className="mr-2 h-4 w-4" />
-            Szerkesztés
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/hive/${hive.id}`}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Szerkesztés
+            </Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
