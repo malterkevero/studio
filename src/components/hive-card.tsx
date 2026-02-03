@@ -32,6 +32,7 @@ import Link from "next/link"
 type HiveCardProps = {
   hive: Hive
   onDelete: () => void
+  onViewDetails: () => void
 }
 
 const queenColorMap: Record<string, string> = {
@@ -43,9 +44,12 @@ const queenColorMap: Record<string, string> = {
 };
 
 
-export default function HiveCard({ hive, onDelete }: HiveCardProps) {
+export default function HiveCard({ hive, onDelete, onViewDetails }: HiveCardProps) {
   return (
-    <Card className="flex flex-col h-full bg-card hover:shadow-lg transition-shadow duration-300">
+    <Card 
+      className="flex flex-col h-full bg-card hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+      onClick={onViewDetails}
+    >
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardTitle className="font-headline text-xl">{hive.name}</CardTitle>
@@ -77,7 +81,7 @@ export default function HiveCard({ hive, onDelete }: HiveCardProps) {
         </div>
       </CardContent>
       <CardFooter className="mt-auto pt-4 border-t border-border/50">
-        <div className="flex w-full justify-end gap-2">
+        <div className="flex w-full justify-end gap-2" onClick={(e) => e.stopPropagation()}>
           <QrCodeDialog hiveId={hive.id} hiveName={hive.name} />
           <Button variant="outline" size="sm" asChild>
             <Link href={`/hive/${hive.id}`}>

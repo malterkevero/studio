@@ -20,6 +20,7 @@ import ReminderForm from '@/components/reminder-form';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import EmptyReminders from '@/components/empty-reminders';
+import HiveDetailsDialog from '@/components/hive-details-dialog';
 
 const getUuid = () => (typeof uuidv4 === 'function' ? uuidv4() : Math.random().toString(36).substring(2, 15));
 
@@ -30,6 +31,9 @@ function PageContent() {
   const [isHiveSheetOpen, setIsHiveSheetOpen] = React.useState(false);
   const [isReminderSheetOpen, setIsReminderSheetOpen] = React.useState(false);
   const { toast } = useToast();
+  
+  const [selectedHive, setSelectedHive] = React.useState<Hive | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = React.useState(false);
 
   const [activeTab, setActiveTab] = React.useState('hives');
   const router = useRouter();
@@ -103,6 +107,20 @@ function PageContent() {
     }
   };
 
+  const handleViewHiveDetails = (hive: Hive) => {
+    setSelectedHive(hive);
+    setIsDetailsDialogOpen(true);
+  };
+
+  const handleCloseDetailsDialog = () => {
+    setIsDetailsDialogOpen(false);
+    // Add a delay to allow the dialog to animate out before clearing the data
+    setTimeout(() => {
+        setSelectedHive(null);
+    }, 300);
+  };
+
+
   // Reminder Handlers
   const handleAddReminder = () => {
     setIsReminderSheetOpen(true);
@@ -158,7 +176,12 @@ function PageContent() {
                 ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {hives.map((hive) => (
-                    <HiveCard key={hive.id} hive={hive} onDelete={() => handleDeleteHive(hive.id)} />
+                    <HiveCard 
+                        key={hive.id} 
+                        hive={hive} 
+                        onViewDetails={() => handleViewHiveDetails(hive)}
+                        onDelete={() => handleDeleteHive(hive.id)} 
+                    />
                     ))}
                 </div>
                 )}
@@ -202,6 +225,9 @@ function PageContent() {
       <Sheet open={isReminderSheetOpen} onOpenChange={setIsReminderSheetOpen}>
         <SheetContent 
             className="sm:max-w-lg w-full"
+            onInteractOutside={(e) => {
+              e.preventDefault();
+            }}
         >
            <SheetHeader>
             <SheetTitle>Új emlékeztető</SheetTitle>
@@ -212,6 +238,12 @@ function PageContent() {
           />
         </SheetContent>
       </Sheet>
+      
+      <HiveDetailsDialog 
+        hive={selectedHive}
+        open={isDetailsDialogOpen}
+        onOpenChange={handleCloseDetailsDialog}
+      />
     </div>
   );
 }
