@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from 'react';
+import { Suspense } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 import useLocalStorage from "@/hooks/use-local-storage";
 import type { Hive, Reminder } from '@/lib/types';
@@ -21,14 +23,35 @@ import EmptyReminders from '@/components/empty-reminders';
 
 const getUuid = () => (typeof uuidv4 === 'function' ? uuidv4() : Math.random().toString(36).substring(2, 15));
 
-
-export default function Home() {
+function PageContent() {
   const [hives, setHives] = useLocalStorage<Hive[]>('hives', []);
   const [reminders, setReminders] = useLocalStorage<Reminder[]>('reminders', []);
 
   const [isHiveSheetOpen, setIsHiveSheetOpen] = React.useState(false);
   const [isReminderSheetOpen, setIsReminderSheetOpen] = React.useState(false);
   const { toast } = useToast();
+
+  const [activeTab, setActiveTab] = React.useState('hives');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  React.useEffect(() => {
+    const tab = searchParams.get('tab');
+    const action = searchParams.get('action');
+
+    if (tab || action) {
+      if (tab === 'reminders') {
+        setActiveTab('reminders');
+      }
+  
+      if (action === 'add-reminder') {
+        setActiveTab('reminders');
+        setIsReminderSheetOpen(true);
+      }
+      router.replace('/', { shallow: true });
+    }
+  }, [searchParams, router, setActiveTab, setIsReminderSheetOpen]);
+
 
   // Hive Handlers
   const handleAddHive = () => {
@@ -123,7 +146,7 @@ export default function Home() {
     <div className="min-h-screen w-full">
       <PageHeader onAddHive={handleAddHive} onExport={handleExport} />
       <main className="p-4 sm:p-6 lg:p-8">
-        <Tabs defaultValue="hives" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="mb-4">
                 <TabsTrigger value="hives">Kaptárak</TabsTrigger>
                 <TabsTrigger value="reminders">Emlékeztetők</TabsTrigger>
@@ -189,4 +212,17 @@ export default function Home() {
       </Sheet>
     </div>
   );
+}
+
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <p>Adatok betöltése...</p>
+      </div>
+    }>
+      <PageContent />
+    </Suspense>
+  )
 }

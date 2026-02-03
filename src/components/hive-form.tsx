@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { z } from "zod"
@@ -29,7 +30,7 @@ import {
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { DatePicker } from "@/components/date-picker"
-import { Calendar } from "lucide-react"
+import { BellPlus } from "lucide-react"
 
 type HiveFormValues = z.infer<typeof hiveSchema>;
 
@@ -43,7 +44,6 @@ type HiveFormProps = {
 const currentYear = new Date().getFullYear();
 
 export default function HiveForm({ onSubmit, onCancel, initialData, showJumpToCalendar }: HiveFormProps) {
-  const datePickerRef = React.useRef<HTMLDivElement>(null);
   const form = useForm<HiveFormValues>({
     resolver: zodResolver(hiveSchema),
     defaultValues: initialData 
@@ -228,7 +228,7 @@ export default function HiveForm({ onSubmit, onCancel, initialData, showJumpToCa
             </div>
         </div>
 
-         <div className="space-y-4 p-4 border rounded-lg" ref={datePickerRef}>
+         <div className="space-y-4 p-4 border rounded-lg">
              <h3 className="font-medium">Utolsó beavatkozás</h3>
             <FormField
                 control={form.control}
@@ -273,13 +273,11 @@ export default function HiveForm({ onSubmit, onCancel, initialData, showJumpToCa
 
         <div className="flex justify-end gap-2 pt-4">
           {showJumpToCalendar && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => datePickerRef.current?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Ugrás a naptárhoz
+            <Button asChild type="button" variant="outline">
+              <Link href="/?tab=reminders&action=add-reminder">
+                <BellPlus className="mr-2 h-4 w-4" />
+                Emlékeztető hozzáadása
+              </Link>
             </Button>
           )}
           <Button type="button" variant="ghost" onClick={onCancel}>
