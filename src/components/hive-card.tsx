@@ -25,6 +25,8 @@ import { Badge } from "@/components/ui/badge"
 import { Pencil, Trash2, Crown, ShieldCheck, Hexagon, CalendarDays } from "lucide-react"
 import { format } from "date-fns"
 import { hu } from "date-fns/locale"
+import { cn } from "@/lib/utils"
+import QrCodeDialog from "./qr-code-dialog"
 
 type HiveCardProps = {
   hive: Hive
@@ -76,6 +78,7 @@ export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
       </CardContent>
       <CardFooter className="mt-auto pt-4 border-t border-border/50">
         <div className="flex w-full justify-end gap-2">
+          <QrCodeDialog hiveId={hive.id} hiveName={hive.name} />
           <Button variant="outline" size="sm" onClick={onEdit}>
             <Pencil className="mr-2 h-4 w-4" />
             Szerkesztés
@@ -106,7 +109,4 @@ export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
       </CardFooter>
     </Card>
   )
-}
-function cn(arg0: string, arg1: string | undefined): string | undefined {
-    return [arg0, arg1].filter(Boolean).join(' ');
 }
