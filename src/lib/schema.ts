@@ -26,3 +26,8 @@ export const hiveSchema = z.object({
   }),
   notes: z.string().optional(),
 });
+
+export const reminderSchema = z.object({
+  text: z.string().min(1, 'Az emlékeztető szövege nem lehet üres.'),
+  dueDate: z.date({ required_error: "A határidő megadása kötelező."}),
+});

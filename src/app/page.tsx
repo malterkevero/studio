@@ -4,42 +4,50 @@ import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import useLocalStorage from "@/hooks/use-local-storage";
-import type { Hive } from '@/lib/types';
+import type { Hive, Reminder } from '@/lib/types';
 import { exportHivesToCsv } from '@/lib/utils';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import PageHeader from '@/components/page-header';
 import HiveCard from '@/components/hive-card';
 import HiveForm from '@/components/hive-form';
 import EmptyState from '@/components/empty-state';
+import RemindersList from '@/components/reminders-list';
+import ReminderForm from '@/components/reminder-form';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import EmptyReminders from '@/components/empty-reminders';
 
-// Since uuid is a CJS module, we need to handle its import.
-// A simple way is to check if it's a function.
 const getUuid = () => (typeof uuidv4 === 'function' ? uuidv4() : Math.random().toString(36).substring(2, 15));
 
 
 export default function Home() {
   const [hives, setHives] = useLocalStorage<Hive[]>('hives', []);
-  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [reminders, setReminders] = useLocalStorage<Reminder[]>('reminders', []);
+
+  const [isHiveSheetOpen, setIsHiveSheetOpen] = React.useState(false);
+  const [isReminderSheetOpen, setIsReminderSheetOpen] = React.useState(false);
   const [editingHive, setEditingHive] = React.useState<Hive | null>(null);
   const { toast } = useToast();
 
-  const handleAdd = () => {
+  // Hive Handlers
+  const handleAddHive = () => {
     setEditingHive(null);
-    setIsSheetOpen(true);
+    setIsHiveSheetOpen(true);
   };
 
-  const handleEdit = (hive: Hive) => {
+  const handleEditHive = (hive: Hive) => {
     setEditingHive(hive);
-    setIsSheetOpen(true);
+    setIsHiveSheetOpen(true);
   };
   
-  const handleCloseSheet = () => {
-    setIsSheetOpen(false);
+  const handleCloseHiveSheet = () => {
+    setIsHiveSheetOpen(false);
     setEditingHive(null);
   }
 
-  const handleDelete = (id: string) => {
+  const handleDeleteHive = (id: string) => {
     setHives(hives.filter((hive) => hive.id !== id));
     toast({
       title: "Sikeres törlés!",
@@ -47,7 +55,7 @@ export default function Home() {
     });
   };
 
-  const handleSave = (data: Omit<Hive, 'id'>) => {
+  const handleSaveHive = (data: Omit<Hive, 'id'>) => {
     if (editingHive) {
       setHives(hives.map((hive) => (hive.id === editingHive.id ? { ...data, id: editingHive.id } : hive)));
        toast({
@@ -61,7 +69,7 @@ export default function Home() {
         description: "Az új kaptár mentésre került.",
       });
     }
-    handleCloseSheet();
+    handleCloseHiveSheet();
   };
 
   const handleExport = () => {
@@ -88,30 +96,110 @@ export default function Home() {
     }
   };
 
+  // Reminder Handlers
+  const handleAddReminder = () => {
+    setIsReminderSheetOpen(true);
+  };
+
+  const handleCloseReminderSheet = () => {
+    setIsReminderSheetOpen(false);
+  };
+
+  const handleSaveReminder = (data: Omit<Reminder, 'id' | 'completed'>) => {
+    const newReminder: Reminder = {
+      ...data,
+      id: getUuid(),
+      completed: false,
+    };
+    setReminders([...reminders, newReminder]);
+    toast({
+      title: "Sikeres hozzáadás!",
+      description: "Az új emlékeztető mentésre került.",
+    });
+    handleCloseReminderSheet();
+  };
+  
+  const handleToggleReminder = (id: string) => {
+    setReminders(
+      reminders.map(r =>
+        r.id === id ? { ...r, completed: !r.completed, dueDate: new Date(r.dueDate) } : { ...r, dueDate: new Date(r.dueDate) }
+      )
+    );
+  };
+
+  const handleDeleteReminder = (id: string) => {
+    setReminders(reminders.filter(r => r.id !== id));
+    toast({
+      title: "Emlékeztető törölve!",
+    });
+  };
+
 
   return (
     <div className="min-h-screen w-full">
-      <PageHeader onAdd={handleAdd} onExport={handleExport} />
+      <PageHeader onAddHive={handleAddHive} onExport={handleExport} />
       <main className="p-4 sm:p-6 lg:p-8">
-        {hives.length === 0 ? (
-          <EmptyState onAdd={handleAdd} />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {hives.map((hive) => (
-              <HiveCard key={hive.id} hive={hive} onEdit={() => handleEdit(hive)} onDelete={() => handleDelete(hive.id)} />
-            ))}
-          </div>
-        )}
+        <Tabs defaultValue="hives" className="w-full">
+            <TabsList className="mb-4">
+                <TabsTrigger value="hives">Kaptárak</TabsTrigger>
+                <TabsTrigger value="reminders">Emlékeztetők</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="hives">
+                {hives.length === 0 ? (
+                <EmptyState onAdd={handleAddHive} />
+                ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {hives.map((hive) => (
+                    <HiveCard key={hive.id} hive={hive} onEdit={() => handleEditHive(hive)} onDelete={() => handleDeleteHive(hive.id)} />
+                    ))}
+                </div>
+                )}
+            </TabsContent>
+            
+            <TabsContent value="reminders">
+                 {reminders.length === 0 ? (
+                    <EmptyReminders onAdd={handleAddReminder} />
+                ) : (
+                    <>
+                        <div className="flex justify-end mb-4">
+                            <Button onClick={handleAddReminder}>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Új emlékeztető
+                            </Button>
+                        </div>
+                        <RemindersList 
+                            reminders={reminders}
+                            onToggle={handleToggleReminder}
+                            onDelete={handleDeleteReminder}
+                        />
+                    </>
+                )}
+            </TabsContent>
+        </Tabs>
       </main>
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="sm:max-w-lg w-full overflow-y-auto" onInteractOutside={handleCloseSheet}>
+      
+      <Sheet open={isHiveSheetOpen} onOpenChange={setIsHiveSheetOpen}>
+        <SheetContent className="sm:max-w-lg w-full overflow-y-auto" onInteractOutside={handleCloseHiveSheet}>
            <SheetHeader>
             <SheetTitle>{editingHive ? 'Kaptár szerkesztése' : 'Új kaptár hozzáadása'}</SheetTitle>
           </SheetHeader>
           <HiveForm 
-            onSubmit={handleSave} 
-            onCancel={handleCloseSheet}
+            onSubmit={handleSaveHive} 
+            onCancel={handleCloseHiveSheet}
             initialData={editingHive} 
+          />
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={isReminderSheetOpen} onOpenChange={setIsReminderSheetOpen}>
+        <SheetContent className="sm:max-w-lg w-full" onInteractOutside={handleCloseReminderSheet}>
+           <SheetHeader>
+            <SheetTitle>Új emlékeztető</SheetTitle>
+          </SheetHeader>
+          <ReminderForm 
+            onSubmit={handleSaveReminder} 
+            onCancel={handleCloseReminderSheet}
           />
         </SheetContent>
       </Sheet>

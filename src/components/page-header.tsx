@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Hexagon, Plus, Download } from "lucide-react"
 
 type PageHeaderProps = {
-    onAdd: () => void;
+    onAddHive: () => void;
     onExport: () => void;
 }
 
-export default function PageHeader({ onAdd, onExport }: PageHeaderProps) {
+export default function PageHeader({ onAddHive, onExport }: PageHeaderProps) {
     return (
         <header className="bg-card border-b border-border/80 p-4 sticky top-0 z-10">
             <div className="container mx-auto flex justify-between items-center">
@@ -23,7 +23,7 @@ export default function PageHeader({ onAdd, onExport }: PageHeaderProps) {
                         <Download className="mr-2 h-4 w-4"/>
                         Export CSV
                     </Button>
-                    <Button size="sm" onClick={onAdd}>
+                    <Button size="sm" onClick={onAddHive}>
                         <Plus className="mr-2 h-4 w-4" />
                         Új Kaptár
                     </Button>

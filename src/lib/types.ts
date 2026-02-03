@@ -24,3 +24,10 @@ export type Hive = {
   };
   notes: string | undefined;
 };
+
+export type Reminder = {
+  id: string;
+  text: string;
+  dueDate: Date;
+  completed: boolean;
+};
