@@ -20,7 +20,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
                 setStoredValue(initialValue);
             }
         }
-    }, [isMounted, key, initialValue]);
+    }, [isMounted, key]);
 
     const setValue: React.Dispatch<React.SetStateAction<T>> = (value) => {
         if (typeof window === 'undefined') {
