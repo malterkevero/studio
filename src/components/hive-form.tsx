@@ -47,7 +47,7 @@ export default function HiveForm({ onSubmit, onCancel, initialData, showJumpToCa
   const form = useForm<HiveFormValues>({
     resolver: zodResolver(hiveSchema),
     defaultValues: initialData 
-      ? { ...initialData, lastIntervention: { ...initialData.lastIntervention, date: new Date(initialData.lastIntervention.date) } }
+      ? initialData
       : {
       name: "",
       queen: {

@@ -129,7 +129,7 @@ function PageContent() {
   const handleToggleReminder = (id: string) => {
     setReminders(
       reminders.map(r =>
-        r.id === id ? { ...r, completed: !r.completed, dueDate: new Date(r.dueDate) } : { ...r, dueDate: new Date(r.dueDate) }
+        r.id === id ? { ...r, completed: !r.completed } : r
       )
     );
   };
