@@ -28,6 +28,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
                 setStoredValue(initialValue);
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isMounted, key]);
 
     const setValue: React.Dispatch<React.SetStateAction<T>> = (value) => {
