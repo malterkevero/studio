@@ -200,7 +200,12 @@ function PageContent() {
       </Sheet>
 
       <Sheet open={isReminderSheetOpen} onOpenChange={setIsReminderSheetOpen}>
-        <SheetContent className="sm:max-w-lg w-full">
+        <SheetContent 
+            className="sm:max-w-lg w-full"
+            onInteractOutside={(e) => {
+                e.preventDefault();
+            }}
+        >
            <SheetHeader>
             <SheetTitle>Új emlékeztető</SheetTitle>
           </SheetHeader>
