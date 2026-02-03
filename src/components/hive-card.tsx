@@ -22,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { Pencil, Trash2, Crown, ShieldCheck, Honeycomb, CalendarDays } from "lucide-react"
+import { Pencil, Trash2, Crown, ShieldCheck, Hexagon, CalendarDays } from "lucide-react"
 import { format } from "date-fns"
 import { hu } from "date-fns/locale"
 
@@ -66,7 +66,7 @@ export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
           <span>Erősség: {hive.strength}/5</span>
         </div>
         <div className="flex items-center gap-3">
-            <Honeycomb className="w-5 h-5 text-yellow-600" />
+            <Hexagon className="w-5 h-5 text-yellow-600" />
             <span>Élelem: {hive.food.honey ?? 0}kg méz, {hive.food.pollen ?? 0}kg virágpor</span>
         </div>
          <div className="flex items-center gap-3">
@@ -110,4 +110,3 @@ export default function HiveCard({ hive, onEdit, onDelete }: HiveCardProps) {
 function cn(arg0: string, arg1: string | undefined): string | undefined {
     return [arg0, arg1].filter(Boolean).join(' ');
 }
-
