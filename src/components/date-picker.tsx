@@ -22,7 +22,7 @@ type DatePickerProps = {
 
 export function DatePicker({ date, setDate, className }: DatePickerProps) {
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -33,13 +33,13 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP", { locale: hu }) : <span>Válassz dátumot</span>}
+          {date ? format(new Date(date), "PPP", { locale: hu }) : <span>Válassz dátumot</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date ? new Date(date) : undefined}
           onSelect={setDate}
           initialFocus
           locale={hu}
