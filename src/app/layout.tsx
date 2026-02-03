@@ -5,6 +5,20 @@ import { Toaster } from '@/components/ui/toaster';
 export const metadata: Metadata = {
   title: 'Kaptár Napló',
   description: 'Modern kaptárkezelő alkalmazás méhészeknek.',
+  manifest: '/manifest.json',
+  themeColor: '#FBBF24',
+  applicationName: 'Kaptár Napló',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Kaptár Napló',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

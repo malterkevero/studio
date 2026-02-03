@@ -1,0 +1,17 @@
+{
+  "name": "Kaptár Napló",
+  "short_name": "KaptárNapló",
+  "description": "Modern kaptárkezelő alkalmazás méhészeknek.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#FBBF24",
+  "background_color": "#FDFBEA",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
