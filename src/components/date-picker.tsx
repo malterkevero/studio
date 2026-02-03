@@ -21,6 +21,11 @@ type DatePickerProps = {
 }
 
 export function DatePicker({ date, setDate, className }: DatePickerProps) {
+  // Ensure `date` is a valid Date object or undefined.
+  // This handles cases where `date` might be a string (from localStorage) or an invalid date.
+  const validDate = date ? new Date(date) : undefined;
+  const selected = validDate && !isNaN(validDate.getTime()) ? validDate : undefined;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -28,18 +33,18 @@ export function DatePicker({ date, setDate, className }: DatePickerProps) {
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
+            !selected && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP", { locale: hu }) : <span>Válassz dátumot</span>}
+          {selected ? format(selected, "PPP", { locale: hu }) : <span>Válassz dátumot</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={selected}
           onSelect={setDate}
           initialFocus
           locale={hu}
