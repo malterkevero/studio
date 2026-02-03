@@ -94,7 +94,8 @@ export default function HivePage() {
           <HiveForm 
             onSubmit={handleSave} 
             onCancel={handleCancel}
-            initialData={editingHive} 
+            initialData={editingHive}
+            showJumpToCalendar={true} 
           />
        </main>
     </div>

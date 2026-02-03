@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { DatePicker } from "@/components/date-picker"
+import { Calendar } from "lucide-react"
 
 type HiveFormValues = z.infer<typeof hiveSchema>;
 
@@ -36,11 +37,13 @@ type HiveFormProps = {
   onSubmit: (data: HiveFormValues) => void;
   onCancel: () => void;
   initialData?: Hive | null;
+  showJumpToCalendar?: boolean;
 }
 
 const currentYear = new Date().getFullYear();
 
-export default function HiveForm({ onSubmit, onCancel, initialData }: HiveFormProps) {
+export default function HiveForm({ onSubmit, onCancel, initialData, showJumpToCalendar }: HiveFormProps) {
+  const datePickerRef = React.useRef<HTMLDivElement>(null);
   const form = useForm<HiveFormValues>({
     resolver: zodResolver(hiveSchema),
     defaultValues: initialData 
@@ -225,7 +228,7 @@ export default function HiveForm({ onSubmit, onCancel, initialData }: HiveFormPr
             </div>
         </div>
 
-         <div className="space-y-4 p-4 border rounded-lg">
+         <div className="space-y-4 p-4 border rounded-lg" ref={datePickerRef}>
              <h3 className="font-medium">Utolsó beavatkozás</h3>
             <FormField
                 control={form.control}
@@ -269,6 +272,16 @@ export default function HiveForm({ onSubmit, onCancel, initialData }: HiveFormPr
         />
 
         <div className="flex justify-end gap-2 pt-4">
+          {showJumpToCalendar && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => datePickerRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Ugrás a naptárhoz
+            </Button>
+          )}
           <Button type="button" variant="ghost" onClick={onCancel}>
             Mégse
           </Button>
