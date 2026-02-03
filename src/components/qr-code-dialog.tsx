@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { QrCode } from 'lucide-react';
 import QRCode from 'qrcode';
+import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type QrCodeDialogProps = {
   hiveId: string;
@@ -20,29 +22,33 @@ type QrCodeDialogProps = {
 };
 
 export default function QrCodeDialog({ hiveId, hiveName }: QrCodeDialogProps) {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
-    if (open && canvasRef.current) {
+    if (open) {
+      setQrCodeDataUrl(null); // Reset on open
       const url = `${window.location.origin}/hive/${hiveId}`;
-      QRCode.toCanvas(canvasRef.current, url, { width: 256 }, (error) => {
-        if (error) console.error(error);
+      QRCode.toDataURL(url, { width: 256, margin: 2 }, (err, url) => {
+        if (err) {
+          console.error(err);
+          setQrCodeDataUrl(null);
+        } else {
+          setQrCodeDataUrl(url);
+        }
       });
     }
   }, [open, hiveId]);
 
   const handlePrint = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!qrCodeDataUrl) return;
 
-    const dataUrl = canvas.toDataURL();
     const windowContent = `
       <html>
-        <head><title>Print QR Code</title></head>
-        <body style="text-align: center; padding-top: 2rem;">
-          <h2 style="font-family: sans-serif; font-size: 1.5rem;">${hiveName}</h2>
-          <img src="${dataUrl}" style="width: 80vw; max-width: 400px;" />
+        <head><title>Print QR Code for ${hiveName}</title></head>
+        <body style="text-align: center; padding-top: 2rem; font-family: sans-serif;">
+          <h2>${hiveName}</h2>
+          <img src="${qrCodeDataUrl}" style="width: 80vw; max-width: 400px;" />
           <script>
             window.onload = () => {
               window.print();
@@ -73,14 +79,18 @@ export default function QrCodeDialog({ hiveId, hiveName }: QrCodeDialogProps) {
             Nyomtasd ki ezt a QR kódot, és ragaszd a kaptárra a gyors azonosításhoz.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-center py-4">
-          <canvas ref={canvasRef} />
+        <div className="flex justify-center items-center py-4 h-[256px]">
+          {qrCodeDataUrl ? (
+            <Image src={qrCodeDataUrl} alt={`QR Code for ${hiveName}`} width={256} height={256} />
+          ) : (
+            <Skeleton className="w-[256px] h-[256px] rounded-md" />
+          )}
         </div>
         <DialogFooter>
           <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
             Bezárás
           </Button>
-          <Button onClick={handlePrint}>Nyomtatás</Button>
+          <Button onClick={handlePrint} disabled={!qrCodeDataUrl}>Nyomtatás</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
