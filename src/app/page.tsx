@@ -187,7 +187,7 @@ function PageContent() {
       </main>
       
       <Sheet open={isHiveSheetOpen} onOpenChange={setIsHiveSheetOpen}>
-        <SheetContent className="sm:max-w-lg w-full overflow-y-auto" onInteractOutside={handleCloseHiveSheet}>
+        <SheetContent className="sm:max-w-lg w-full overflow-y-auto">
            <SheetHeader>
             <SheetTitle>Új kaptár hozzáadása</SheetTitle>
           </SheetHeader>
@@ -200,7 +200,7 @@ function PageContent() {
       </Sheet>
 
       <Sheet open={isReminderSheetOpen} onOpenChange={setIsReminderSheetOpen}>
-        <SheetContent className="sm:max-w-lg w-full" onInteractOutside={handleCloseReminderSheet}>
+        <SheetContent className="sm:max-w-lg w-full">
            <SheetHeader>
             <SheetTitle>Új emlékeztető</SheetTitle>
           </SheetHeader>
